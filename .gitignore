@@ -1,10 +1,10 @@
-# # Linux
-# .directory
-# *~
+# Linux
+.directory
+*~
 
 
-# # npm
-# node_modules
-# package-lock.json
-# *.log
-# *.gz
+# npm
+node_modules
+package-lock.json
+*.log
+*.gz
