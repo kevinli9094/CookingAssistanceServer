@@ -8,7 +8,7 @@ function initDatabase(url, databaseName, callback) {
     callback(null, mDatabase);
   }
 
-  MongoClient.connect(url, (err, client) => {
+  MongoClient.connect(url, { useUnifiedTopology: 'true' }, (err, client) => {
     if (err) {
       callback(err);
     }
@@ -16,6 +16,16 @@ function initDatabase(url, databaseName, callback) {
 
     db.recipes = db.collection('recipes');
     db.user = db.collection('users');
+    db.crawlerHelper = db.collection('crawlerHelper');
+
+    db.crawlerHelper.findOne()
+      .then((entry) => {
+        if (!entry) {
+          db.crawlerHelper.insertOne({
+            allRecipesIndex: 0,
+          });
+        }
+      });
 
     mDatabase = db;
     return callback(null, mDatabase);
