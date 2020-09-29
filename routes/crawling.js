@@ -8,8 +8,8 @@ const router = express.Router();
 
 // For initial crawling of allRecipes, validate the begin index and end index
 const validateInitInput = (req) => {
-  const beginIndex = parseInt(req.query.beginIndex, 10);
-  const endIndex = parseInt(req.query.endIndex, 10);
+  const beginIndex = parseInt(req.body.beginIndex, 10);
+  const endIndex = parseInt(req.body.endIndex, 10);
 
   if (beginIndex && endIndex && beginIndex < endIndex) {
     return true;
@@ -20,7 +20,7 @@ const validateInitInput = (req) => {
 
 // For updating of allRecipes, validate thecontinueErrorCount field
 const validateUpdateinput = (req) => {
-  const continueErrorCount = parseInt(req.query.continueErrorCount, 10);
+  const continueErrorCount = parseInt(req.body.continueErrorCount, 10);
 
   if (continueErrorCount && continueErrorCount > 0) {
     return true;
@@ -39,8 +39,8 @@ router.post('/init/allrecipes', (req, res) => {
     onGoingWork = true;
 
     const data = {
-      beginIndex: req.query.beginIndex,
-      endIndex: req.query.endIndex,
+      beginIndex: req.body.beginIndex,
+      endIndex: req.body.endIndex,
     };
     const workerPath = path.join(__dirname, '..', 'libs', 'crawlers', 'initWorker.js');
     const worker = new Worker(workerPath, { workerData: data });
@@ -62,7 +62,7 @@ router.post('/update/allrecipes', (req, res) => {
   } else {
     onGoingWork = true;
 
-    const data = { continueErrorCount: req.query.continueErrorCount };
+    const data = { continueErrorCount: req.body.continueErrorCount };
     const workerPath = path.join(__dirname, '..', 'libs', 'crawlers', 'updateWorker.js');
     const worker = new Worker(workerPath, { workerData: data });
 
@@ -72,6 +72,26 @@ router.post('/update/allrecipes', (req, res) => {
 
     res.status(200).json({ message: 'updating' });
   }
+});
+
+router.post('/crawler/index/drop', (req, res) => {
+  res.app.db.crawlerHelper.drop()
+    .then(() => {
+      res.status(200).json({ message: 'Deleted all crawlerHelper' });
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+});
+
+router.get('/crawler/index', (req, res) => {
+  res.app.db.crawlerHelper.aggregate([{ $sample: { size: 10 } }]).toArray()
+    .then((result) => {
+      res.status(200).json({ result });
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
 });
 
 module.exports = router;

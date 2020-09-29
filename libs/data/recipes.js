@@ -8,18 +8,18 @@ const validateRecipe = (recipe) => {
 };
 
 // store it in db only if it has valid instructions, and valid ingredients
-const storeIfNeeded = (recipe, db) => new Promise((resolve, reject) => {
+const storeIfNeeded = (recipe, db) => {
   if (validateRecipe(recipe)) {
-    db.recipes.insertOne(recipe, (error, result) => {
-      if (error) {
-        reject(error);
-      }
-      resolve(result);
-    });
-  } else {
-    resolve();
+    return db.recipes.findOne({ author: recipe.author, name: recipe.name })
+      .then((doc) => {
+        if (doc) {
+          return Promise.reject(new Error('Dublication. Skipping'));
+        }
+        return db.recipes.insertOne(recipe);
+      });
   }
-});
+  return Promise.reject(new Error('Invlide recipe'));
+};
 
 const randomRecipe = (db) => db.recipes.aggregate([{ $sample: { size: 1 } }]).toArray();
 
