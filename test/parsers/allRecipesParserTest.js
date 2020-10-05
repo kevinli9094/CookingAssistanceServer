@@ -2,11 +2,11 @@ const { expect } = require('chai');
 const fs = require('fs');
 const path = require('path');
 
-const { parse } = require('../libs/parsers/allRecipesParser');
+const { parse } = require('../../libs/parsers/allRecipesParser');
 
 describe('all recepies parser', () => {
   it('testing covert format 1 data', () => {
-    const testDataPath = path.join(__dirname, 'testData', 'allRecipesFormat1.txt');
+    const testDataPath = path.join(__dirname, '..', 'testData', 'allRecipesFormat1.txt');
 
     const converted = parse(fs.readFileSync(testDataPath));
 
@@ -26,7 +26,7 @@ describe('all recepies parser', () => {
   });
 
   it('testing covert format 2 data', () => {
-    const testDataPath = path.join(__dirname, 'testData', 'allRecipesFormat2.txt');
+    const testDataPath = path.join(__dirname, '..', 'testData', 'allRecipesFormat2.txt');
 
     const converted = parse(fs.readFileSync(testDataPath));
 
@@ -45,7 +45,7 @@ describe('all recepies parser', () => {
   });
 
   it('testing covert format 2 data with empty fields', () => {
-    const testDataPath = path.join(__dirname, 'testData', 'allRecipesFormat2EmptyFields.txt');
+    const testDataPath = path.join(__dirname, '..', 'testData', 'allRecipesFormat2EmptyFields.txt');
 
     const converted = parse(fs.readFileSync(testDataPath));
 

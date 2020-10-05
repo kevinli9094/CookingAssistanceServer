@@ -1,54 +1,56 @@
 const request = require('request');
 const parser = require('../parsers/allRecipesParser');
 const recipesDB = require('../data/recipes');
+const { crawlerLogger } = require('../loggers');
 
 const baseUrl = 'https://www.allrecipes.com/recipe/';
 
 const dbFieldName = 'allRecipesIndex';
 
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
-const processIndex = (index, db, callback) => {
+const processIndex = (index, db) => new Promise((resolve) => {
   const currentUrl = baseUrl + index;
+  const result = { index };
 
-  console.log(`sending request ${currentUrl}`);
+  crawlerLogger.debug(`sending request ${currentUrl}`);
   request(currentUrl, (error, response, body) => {
     if (error) {
-      callback(index, error);
+      result.error = error;
+      resolve(result);
     } else if (response && response.statusCode === 200) {
       try {
-        console.log(`trying to store url: ${currentUrl}`);
+        crawlerLogger.debug(`trying to store url: ${currentUrl}`);
         recipesDB.storeIfNeeded(parser.parse(body), db)
           .then(() => {
-            callback(index);
+            resolve(result);
           })
           .catch((err) => {
-            callback(index, err);
+            result.error = err;
+            resolve(result);
           });
       } catch (exception) {
-        callback(index, exception);
+        result.error = exception;
+        resolve(result);
       }
     } else {
-      callback(index, new Error('No response', 'Url is not responding'));
+      result.error = new Error('No response', 'Url is not responding');
+      resolve(result);
     }
-  });
-};
-
-const updateIndex = (db, index) => new Promise((resolve) => {
-  const query = {};
-  query[dbFieldName] = { $exists: true, $lt: index };
-  db.crawlerHelper.findOneAndUpdate(query, { $set: { allRecipesIndex: index } }, (err) => {
-    if (err) {
-      console.log(`Something wrong when updating data!${err}`);
-    }
-
-    resolve();
   });
 });
+
+const updateIndex = (db, index) => {
+  const query = {};
+  query[dbFieldName] = { $exists: true, $lt: index };
+  return db.crawlerHelper.findOneAndUpdate(query, { $set: { allRecipesIndex: index } })
+    .then((result) => new Promise((resolve) => {
+      if (!result) {
+        crawlerLogger.warn('cannot find updateIndexs');
+      }
+
+      crawlerLogger.info('Successfully updated updateIndex');
+      resolve();
+    }));
+};
 
 const getStartIndex = (db) => {
   const query = {};
@@ -56,40 +58,39 @@ const getStartIndex = (db) => {
   return db.crawlerHelper.findOne(query);
 };
 
-const initalCrawling = (startIndex, stopIndex, db, callback) => {
-  const skippedErrors = [];
+const initialCrawling = (startIndex, stopIndex, db) => {
   // eslint-disable-next-line no-async-promise-executor
-  const crawlingPromise = new Promise(async (resolve) => {
+  const crawlingPromise = new Promise(async (resolve1) => {
     let count = 0;
     for (let currentIndex = startIndex; currentIndex <= stopIndex; currentIndex += 1) {
-      // eslint-disable-next-line no-loop-func
-      processIndex(currentIndex, db, (index, error) => {
-        count += 1;
-        if (error) {
-          const newError = error;
-          newError.index = index;
-          skippedErrors.push(newError);
-        }
-        if (count === stopIndex - startIndex + 1) {
-          resolve();
-        }
-      });
-
       // eslint-disable-next-line no-await-in-loop
-      await sleep(2000);
+      await processIndex(currentIndex, db)
+      // eslint-disable-next-line no-loop-func
+        .then((result) => new Promise((resolve2) => {
+          count += 1;
+          let messageToBeLog = `Successfully stored recipe for index : ${result.index}`;
+          if (result.error) {
+            messageToBeLog = `Ran into error while processing ${result.index}. message: ${result.error.message}. \nstack: ${result.error.stack}`;
+          }
+          crawlerLogger.debug(messageToBeLog);
+          if (count === stopIndex - startIndex + 1) {
+            crawlerLogger.info('Finished crawling');
+            resolve1();
+          }
+          resolve2();
+        }));
     }
   });
 
-  crawlingPromise
-    .then(() => {
-      updateIndex(db, stopIndex)
-        .then(callback(skippedErrors));
-    });
+  crawlerLogger.info(`Starting crawling from ${startIndex} to ${stopIndex}`);
+  return crawlingPromise
+    .then(updateIndex(db, stopIndex + 1));
 };
 
-const update = (errorsToStop, db, callback) => {
+const update = (errorsToStop, db) => {
   let currentIndex = 0;
-  const updatePromise = (startIndexs) => new Promise((resolve) => {
+  // eslint-disable-next-line no-async-promise-executor
+  const updatePromise = (startIndexs) => new Promise(async (resolve) => {
     let currentErrorCount = 0;
 
     if (startIndexs) {
@@ -97,34 +98,37 @@ const update = (errorsToStop, db, callback) => {
     }
 
     while (currentErrorCount < errorsToStop) {
+      // eslint-disable-next-line no-await-in-loop
+      await processIndex(currentIndex, db)
       // eslint-disable-next-line no-loop-func
-      processIndex(currentIndex, db, (error, index) => {
-        if (error) {
-          console.log(`Running into error while processing ${index}. skipping error: ${error}`);
-          currentErrorCount += 1;
-        } else {
-          currentErrorCount = 0;
-        }
-      });
+        .then((result) => new Promise((resolve1) => {
+          if (result.error) {
+            crawlerLogger.warn(`Running into error while processing ${result.index}. skipping error: ${result.error}`);
+            currentErrorCount += 1;
+          } else {
+            currentErrorCount = 0;
+          }
+          resolve1();
+        }));
+
       currentIndex += 1;
     }
+
+    crawlerLogger.info('Finished updating.');
+
     resolve();
   });
 
-  getStartIndex(db)
-    .then(updatePromise)
+  crawlerLogger.info(`Starting updating. errorsToStop = ${errorsToStop}`);
+  return getStartIndex(db)
+    .then((startIndexs) => updatePromise(startIndexs))
     .then(() => {
-      updateIndex(db, currentIndex);
-    })
-    .then(() => {
-      callback();
-    })
-    .catch((error) => {
-      callback(error);
+      crawlerLogger.info('Starting calling updateIndex');
+      return updateIndex(db, currentIndex);
     });
 };
 
 module.exports = {
-  initalCrawling,
+  initialCrawling,
   update,
 };
