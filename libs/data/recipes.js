@@ -23,7 +23,19 @@ const storeIfNeeded = (recipe, db) => {
 
 const randomRecipe = (db) => db.recipes.aggregate([{ $sample: { size: 1 } }]).toArray();
 
+const searchRecipe = (db, terms, page, perPage) => {
+  const query = { $text: { $search: terms } };
+  return db.recipes.find(query, { score: { $meta: 'textScore' } })
+    .sort({ score: { $meta: 'textScore' } })
+    .skip(perPage * (page - 1))
+    .limit(perPage)
+    .toArray()
+    .then((items) => db.recipes.countDocuments(query)
+      .then((count) => Promise.resolve({ items, totalPageCount: Math.ceil(count / perPage) })));
+};
+
 module.exports = {
   storeIfNeeded,
   randomRecipe,
+  searchRecipe,
 };
