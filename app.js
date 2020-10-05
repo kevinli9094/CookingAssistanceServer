@@ -2,7 +2,6 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const debug = require('debug')('cookingassistanceserver:server');
 const http = require('http');
 
 const { getConfig } = require('./libs/config');
@@ -94,7 +93,7 @@ initDatabase(config.databaseBaseString, config.databaseName)
       const bind = typeof addr === 'string'
         ? `pipe ${addr}`
         : `port ${addr.port}`;
-      debug(`Listening on ${bind}`);
+      defaultLogger.info(`Listening on ${bind}`);
     }
 
     /**
