@@ -7,3 +7,6 @@
 node_modules
 *.log
 *.gz
+
+#  project files
+result
