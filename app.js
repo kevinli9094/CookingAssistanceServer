@@ -93,7 +93,7 @@ initDatabase(config.databaseBaseString, config.databaseName)
       const bind = typeof addr === 'string'
         ? `pipe ${addr}`
         : `port ${addr.port}`;
-        defaultLogger.info(`Listening on ${bind}`);
+      defaultLogger.info(`Listening on ${bind}`);
     }
 
     /**
