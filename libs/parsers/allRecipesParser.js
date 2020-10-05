@@ -45,19 +45,22 @@ const convertJson = (json) => {
       instructions.push(recipe.recipeInstructions[i].text);
     }
 
+    const ratingValue = ((recipe.aggregateRating && recipe.aggregateRating.ratingValue) || 0) * 2;
+    const ratingCount = (recipe.aggregateRating && recipe.aggregateRating.ratingCount) || 0;
+
     convertedJson.name = recipe.name;
     convertedJson.description = recipe.description;
     convertedJson.img = recipe.image.url;
     convertedJson.ingredients = recipe.recipeIngredient;
     convertedJson.originUrl = recipe.mainEntityOfPage;
     convertedJson.author = recipe.author.name;
-    convertedJson.prepTime = recipe.prepTime.substr(4);
-    convertedJson.cookTime = recipe.cookTime.substr(4);
-    convertedJson.totalTime = recipe.totalTime.substr(4);
+    convertedJson.prepTime = recipe.prepTime && recipe.prepTime.substring(4);
+    convertedJson.cookTime = recipe.cookTime && recipe.cookTime.substring(4);
+    convertedJson.totalTime = recipe.totalTime && recipe.totalTime.substring(4);
     convertedJson.instructions = instructions;
     convertedJson.rating = {
-      value: recipe.aggregateRating.ratingValue * 2,
-      count: recipe.aggregateRating.ratingCount,
+      value: ratingValue,
+      count: ratingCount,
     };
     convertedJson.nutrition = recipe.nutrition;
 
