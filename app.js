@@ -7,6 +7,7 @@ const http = require('http');
 const { getConfig } = require('./libs/config');
 const { initDatabase } = require('./libs/data/mongoDb');
 const { defaultLogger } = require('./libs/loggers');
+const { addSchemas } = require('./libs/schema');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -49,10 +50,12 @@ app.use((err, req, res) => {
 });
 
 initDatabase(config.databaseBaseString, config.databaseName)
-  .then((db) => {
+  .then(async (db) => {
     app.db = db;
     app.config = config;
     app.port = app.get('port');
+
+    await addSchemas();
 
     const server = http.createServer(app);
 

@@ -5,9 +5,12 @@
   "scripts": {
     "start": "node app.js",
     "stop": "npx kill-port 9094",
-    "test": "mocha 'test/**/*.js' --recursive --timeout 60000 --exit"
+    "test": "mocha 'test/**/*.js' --recursive --timeout 60000 --exit",
+    "lint": "./node_modules/.bin/eslint ./ --fix"
   },
   "dependencies": {
+    "ajv": "^6.12.5",
+    "ajv-errors": "^1.0.1",
     "cheerio": "^1.0.0-rc.3",
     "cookie-parser": "~1.4.4",
     "express": "~4.16.1",
