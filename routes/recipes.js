@@ -1,6 +1,6 @@
 const express = require('express');
 const recipesDB = require('../libs/data/recipes');
-const { defaultLogger } = require('../libs/loggers');
+const userDB = require('../libs/data/users');
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
 });
 
 // drop all recipes. Only admin can access this
-router.get('/drop', (req, res) => {
+router.post('/drop', (req, res) => {
   res.app.db.recipes.drop()
     .then(() => {
       res.status(200).json({ message: 'Deleted all recipes' });
@@ -29,8 +29,7 @@ router.get('/search', (req, res) => {
   const { page = 1, limit = 10 } = req.query;
 
   if (req.query.terms) {
-    const query = req.query.terms.replace(/,/g, ' ');
-    defaultLogger.info(query);
+    const query = req.query.terms;
     if (query) {
       recipesDB.searchRecipe(res.app.db, query, page, limit)
         .then((result) => {
@@ -45,6 +44,41 @@ router.get('/search', (req, res) => {
   } else {
     res.status(500).json(notValidQueryError);
   }
+});
+
+router.get('/user/search', (req, res) => {
+  const {
+    page = 1, limit = 10, userId, minRating,
+  } = req.query;
+
+  const requirements = req.query;
+  delete requirements.page;
+  delete requirements.limit;
+  delete requirements.userId;
+  delete requirements.minRating;
+
+  if (!userId) {
+    res.status(500).json({ message: 'please provide userId' });
+    return;
+  }
+
+  userDB.finduserById(res.app.db, userId)
+    .then((user) => {
+      if(!user.ingredients){
+        return Promise.reject(new Error('user does not have any ingredient'));
+      }
+      const query = user.ingredients.toString().replace(/,/g, ' ');
+      return recipesDB.searchRecipe(res.app.db, query, page, limit, user, minRating, requirements)
+        .then((result) => {
+          res.status(200).json(result);
+        })
+        .catch((error) => {
+          res.status(500).json({message: 'failed to search for recipe'+error.message});
+        });
+    })
+    .catch((error)=>{
+      res.status(500).json({message: 'failed to search for recipe: '+error.message});
+    });
 });
 
 module.exports = router;

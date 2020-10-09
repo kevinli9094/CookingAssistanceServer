@@ -86,4 +86,96 @@ router.put('/edit', (req, res) => {
     });
 });
 
+router.put('/ingredients/add', (req, res) => {
+  const { userId } = req.body;
+  const { ingredients } = req.body;
+
+  const schemaResult = validateJson('stringArray', ingredients);
+  if (!schemaResult.result) {
+    res.status(400).json({
+      message: 'Failed to add ingredients. Check inputs.',
+      error: schemaResult.errors,
+    });
+    return;
+  }
+
+  usersDb.addIngredients(res.app.db, userId, ingredients)
+    .then(() => {
+      res.status(200).json({ message: 'ok' });
+    })
+    .catch((error) => {
+      defaultLogger.error(error.stack);
+      res.status(400).json({ message: 'fail to update user' });
+    });
+});
+
+router.put('/ingredients/remove', (req, res) => {
+  const { userId } = req.body;
+  const { ingredients } = req.body;
+
+  const schemaResult = validateJson('stringArray', ingredients);
+  if (!schemaResult.result) {
+    res.status(400).json({
+      message: 'Failed to add ingredients. Check inputs.',
+      error: schemaResult.errors,
+    });
+    return;
+  }
+
+  usersDb.removeIngredients(res.app.db, userId, ingredients)
+    .then(() => {
+      res.status(200).json({ message: 'ok' });
+    })
+    .catch((error) => {
+      defaultLogger.error(error.stack);
+      res.status(400).json({ message: 'fail to update user' });
+    });
+});
+
+router.put('/filtered/dishes/add', (req, res) => {
+  const { userId } = req.body;
+  const { dishes } = req.body;
+
+  const schemaResult = validateJson('stringArray', dishes);
+  if (!schemaResult.result) {
+    res.status(400).json({
+      message: 'Failed to add filtered dishes. Check inputs.',
+      error: schemaResult.errors,
+    });
+    return;
+  }
+
+  usersDb.addFilteredDishes(res.app.db, userId, dishes)
+    .then(() => {
+      res.status(200).json({ message: 'ok' });
+    })
+    .catch((error) => {
+      defaultLogger.error(error.stack);
+      res.status(400).json({ message: 'fail to update user' });
+    });
+});
+
+router.put('/filtered/dishes/remove', (req, res) => {
+  const { userId } = req.body;
+  const { dishes } = req.body;
+
+  const schemaResult = validateJson('stringArray', dishes);
+  if (!schemaResult.result) {
+    res.status(400).json({
+      message: 'Failed to add ingredients. Check inputs.',
+      error: schemaResult.errors,
+    });
+    return;
+  }
+
+  usersDb.removeFilteredDishes(res.app.db, userId, dishes)
+    .then(() => {
+      res.status(200).json({ message: 'ok' });
+    })
+    .catch((error) => {
+      defaultLogger.error(error.stack);
+      res.status(400).json({ message: 'fail to update user' });
+    });
+});
+
 module.exports = router;

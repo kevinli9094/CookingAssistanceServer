@@ -6,17 +6,74 @@
             "type": "string",
             "minLength": 3
         },
-        "dietPreference": {
+        "dailyTarget": {
+            "type": "object",
+            "properties": {
+                "calories": {
+                    "$ref": "dietGoal"
+                },
+                "proteinContent": {
+                    "$ref": "dietGoal"
+                },
+                "sugarContent": {
+                    "$ref": "dietGoal"
+                },
+                "sodiumContent": {
+                    "$ref": "dietGoal"
+                },
+                "fatContent": {
+                    "$ref": "dietGoal"
+                },
+                "fiberContent": {
+                    "$ref": "dietGoal"
+                },
+                "carbohydrateContent": {
+                    "$ref": "dietGoal"
+                },
+                "cholesterolContent": {
+                    "$ref": "dietGoal"
+                }
+            },
+            "additionalProperties": false
+        },
+        "dailyAchieved": {
             "type": "object",
             "properties": {
                 "calories": {
                     "type": "integer"
                 },
-                "protein": {
+                "proteinContent": {
+                    "type": "integer"
+                },
+                "sugarContent": {
+                    "type": "integer"
+                },
+                "sodiumContent": {
+                    "type": "integer"
+                },
+                "fatContent": {
+                    "type": "integer"
+                },
+                "fiberContent": {
+                    "type": "integer"
+                },
+                "carbohydrateContent": {
+                    "type": "integer"
+                },
+                "cholesterolContent": {
                     "type": "integer"
                 }
             },
             "additionalProperties": false
+        },
+        "selectedDishes": {
+            "$ref": "stringArray"
+        },
+        "filteredDishes": {
+            "$ref": "stringArray"
+        },
+        "ingredients": {
+            "$ref": "stringArray"
         }
     },
     "errorMessage": {

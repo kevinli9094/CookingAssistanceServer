@@ -3,6 +3,7 @@ const fs = require('fs');
 const Ajv = require('ajv');
 const AjvErrors = require('ajv-errors');
 const ObjectId = require('mongodb').ObjectID;
+const { defaultLogger } = require('./loggers');
 
 const ajv = new Ajv({ allErrors: true, jsonPointers: true });
 
@@ -12,6 +13,7 @@ const addSchemas = () => {
   schemaFiles.forEach((fileName) => {
     const filePath = path.join(schemaDirPath, fileName);
     const fileData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    defaultLogger.info(`adding file: ${fileName}`);
     ajv.addSchema(fileData, fileName.substring(0, fileName.length - 5));
   });
 
