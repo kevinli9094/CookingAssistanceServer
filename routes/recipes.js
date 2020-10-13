@@ -64,7 +64,7 @@ router.get('/user/search', (req, res) => {
 
   userDB.finduserById(res.app.db, userId)
     .then((user) => {
-      if(!user.ingredients){
+      if (!user.ingredients) {
         return Promise.reject(new Error('user does not have any ingredient'));
       }
       const query = user.ingredients.toString().replace(/,/g, ' ');
@@ -73,11 +73,11 @@ router.get('/user/search', (req, res) => {
           res.status(200).json(result);
         })
         .catch((error) => {
-          res.status(500).json({message: 'failed to search for recipe'+error.message});
+          res.status(500).json({ message: `failed to search for recipe${error.message}` });
         });
     })
-    .catch((error)=>{
-      res.status(500).json({message: 'failed to search for recipe: '+error.message});
+    .catch((error) => {
+      res.status(500).json({ message: `failed to search for recipe: ${error.message}` });
     });
 });
 

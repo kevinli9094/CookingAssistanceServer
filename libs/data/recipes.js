@@ -32,7 +32,7 @@ const searchRecipe = (db, terms, page, perPage, user, minRating, requirements) =
   };
 
   if (minRating) {
-    query['rating.value'] = { $gte: parseInt(minRating,10) };
+    query['rating.value'] = { $gte: parseInt(minRating, 10) };
   }
 
   if (user) {
@@ -42,7 +42,7 @@ const searchRecipe = (db, terms, page, perPage, user, minRating, requirements) =
       if (user.selectedDishes && user.selectedDishes.length > 0) {
         filterById.concat(user.selectedDishes);
       }
-      query._id = { $nin: filterById.map(idStr => ObjectId(idStr)) };
+      query._id = { $nin: filterById.map((idStr) => ObjectId(idStr)) };
     }
   }
 

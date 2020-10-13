@@ -49,7 +49,7 @@ router.post('/init/allrecipes', (req, res) => {
       onGoingWork = false;
     });
 
-    res.status(200).json({ message: 'Updating' });
+    res.status(200).json({ message: 'Start crawling' });
   }
 });
 
