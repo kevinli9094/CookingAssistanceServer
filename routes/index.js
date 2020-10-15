@@ -7,8 +7,8 @@ const router = express.Router();
 router.get('/', (req, res) => {
   usersDB.allUsers(res.app.db)
     .then((users) => {
-      res.render('index', { title: 'Express', users: users });
-    })
+      res.render('index', { title: 'Express', users });
+    });
 });
 
 module.exports = router;
