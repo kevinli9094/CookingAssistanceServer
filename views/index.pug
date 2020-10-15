@@ -1,5 +1,13 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  .container
+    h1.text-center Create an user
+    h2.text-center or
+    h1.text-center Select an existing user
+    .row.border.w-75.mx-auto.d-fex.justify-content-center
+      for user in users
+        a.btn.btn-primary.col-3.m-3(href='#')= user.name
+        
+    h2.text-center or
+    h1.text-center Search for recipes
