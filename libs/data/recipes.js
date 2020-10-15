@@ -55,9 +55,9 @@ const searchRecipe = (db, terms, page, perPage, user, minRating, requirements) =
       const key = item[0];
       const dietGoal = item[1];
       if (dietGoal.strategy === 'at least') {
-        query[`nutrition.${key}`] = { $gte: dietGoal.value };
+        query[`nutrition.${key}`] = { $gte: parseFloat(dietGoal.value) };
       } else if (dietGoal.strategy === 'at most') {
-        query[`nutrition.${key}`] = { $lte: dietGoal.value };
+        query[`nutrition.${key}`] = { $lte: parseFloat(dietGoal.value) };
       } else {
         defaultLogger.warn(`Cannot recognize strategy: ${dietGoal.strategy}`);
       }
