@@ -60,7 +60,7 @@ const getStartIndex = (db) => {
 
 const initialCrawling = (startIndex, stopIndex, db) => {
   // eslint-disable-next-line no-async-promise-executor
-  const crawlingPromise = new Promise(async (resolve1) => {
+  const crawlingPromise = new Promise(async (resolve) => {
     let count = 0;
     for (let currentIndex = startIndex; currentIndex <= stopIndex; currentIndex += 1) {
       // eslint-disable-next-line no-await-in-loop
@@ -75,7 +75,7 @@ const initialCrawling = (startIndex, stopIndex, db) => {
           crawlerLogger.debug(messageToBeLog);
           if (count === stopIndex - startIndex + 1) {
             crawlerLogger.info('Finished crawling');
-            resolve1();
+            resolve();
           }
           resolve2();
         }));
@@ -84,7 +84,10 @@ const initialCrawling = (startIndex, stopIndex, db) => {
 
   crawlerLogger.info(`Starting crawling from ${startIndex} to ${stopIndex}`);
   return crawlingPromise
-    .then(updateIndex(db, stopIndex + 1));
+    .then(() => {
+      crawlerLogger.info('Starting calling updateIndex');
+      return updateIndex(db, stopIndex + 1);
+    });
 };
 
 const update = (errorsToStop, db) => {

@@ -1,0 +1,7 @@
+{
+    "$id": "stringArray",
+    "type": "array",
+    "items": {
+        "type": "string"
+    }
+}

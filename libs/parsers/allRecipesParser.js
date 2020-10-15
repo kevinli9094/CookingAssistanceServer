@@ -1,4 +1,5 @@
 const cheerio = require('cheerio');
+const { convertUnitInNutrition } = require('../common');
 
 const removeEndingCharIfNeeded = (string) => {
   const lastChar = string.charAt(string.length - 1);
@@ -62,7 +63,7 @@ const convertJson = (json) => {
       value: ratingValue,
       count: ratingCount,
     };
-    convertedJson.nutrition = recipe.nutrition;
+    convertedJson.nutrition = convertUnitInNutrition(recipe.nutrition);
 
     return convertedJson;
   }
@@ -188,7 +189,7 @@ const parse = (data) => {
             }
           }
 
-          nutrition[key] = value;
+          nutrition[key] = convertUnitInNutrition(value);
         }
       }
     });

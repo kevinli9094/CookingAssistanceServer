@@ -55,7 +55,11 @@ initDatabase(config.databaseBaseString, config.databaseName)
     app.config = config;
     app.port = app.get('port');
 
-    await addSchemas();
+    try {
+      await addSchemas();
+    } catch (error) {
+      defaultLogger.error(error.stack);
+    }
 
     const server = http.createServer(app);
 

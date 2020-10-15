@@ -1,0 +1,23 @@
+{
+    "$id": "dietGoal",
+    "type": "object",
+    "properties": {
+        "value": {
+            "type": "integer"
+        },
+        "strategy": {
+            "type": "string",
+            "pattern": "^at (least|most)$"
+        }
+    },
+    "required": [
+        "value",
+        "strategy"
+    ],
+    "errorMessage": {
+        "properties": {
+            "strategy": "Should be the value of \"at least\" or \"at most\""
+        }
+    },
+    "additionalProperties": false
+}

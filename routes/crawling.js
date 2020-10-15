@@ -49,7 +49,7 @@ router.post('/init/allrecipes', (req, res) => {
       onGoingWork = false;
     });
 
-    res.status(200).json({ message: 'Updating' });
+    res.status(200).json({ message: 'Start crawling' });
   }
 });
 
@@ -74,7 +74,7 @@ router.post('/update/allrecipes', (req, res) => {
   }
 });
 
-router.post('/crawler/index/drop', (req, res) => {
+router.post('/index/drop', (req, res) => {
   res.app.db.crawlerHelper.drop()
     .then(() => {
       res.status(200).json({ message: 'Deleted all crawlerHelper' });
@@ -84,7 +84,7 @@ router.post('/crawler/index/drop', (req, res) => {
     });
 });
 
-router.get('/crawler/index', (req, res) => {
+router.get('/index', (req, res) => {
   res.app.db.crawlerHelper.aggregate([{ $sample: { size: 10 } }]).toArray()
     .then((result) => {
       res.status(200).json({ result });
