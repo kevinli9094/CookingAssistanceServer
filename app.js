@@ -13,6 +13,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const crawlingRouter = require('./routes/crawling');
 const recipesRouter = require('./routes/recipes');
+const pagesRouter = require('./routes/pages');
 
 const config = getConfig();
 
@@ -32,6 +33,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/crawler', crawlingRouter);
 app.use('/recipes', recipesRouter);
+app.use('/page', pagesRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

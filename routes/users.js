@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
 });
 
 // create user
-router.put('/create', (req, res) => {
+router.put('/', (req, res) => {
   const { user } = req.body;
 
   const schemaResult = validateJson('newUser', user);
@@ -32,16 +32,16 @@ router.put('/create', (req, res) => {
 
   usersDb.createUser(res.app.db, user)
     .then(() => {
-      res.status(200).json({ message: 'ok' });
+      res.status(200).json({ message: 'Successfully created new user.' });
     })
     .catch((error) => {
       defaultLogger.error(error.stack);
-      res.status(400).json({ message: 'fail to create user' });
+      res.status(400).json({ message: 'Fail to create user' });
     });
 });
 
 // delete a user by id
-router.delete('/delete', (req, res) => {
+router.delete('/', (req, res) => {
   const id = req.body.userId;
 
   if (id) {
