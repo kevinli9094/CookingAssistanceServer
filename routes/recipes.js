@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
 });
 
 // drop all recipes. Only admin can access this
-router.post('/drop', (req, res) => {
+router.delete('/', (req, res) => {
   res.app.db.recipes.drop()
     .then(() => {
       res.status(200).json({ message: 'Deleted all recipes' });

@@ -6,3 +6,15 @@ body {
 a {
   color: #00B7FF;
 }
+
+#notify_message {
+  position: fixed;
+  display: none;
+  z-index: 9999;
+  padding-top: 10px;
+  height: 50px;
+  bottom: 0px;
+  width: 100%;
+  text-align: center;
+  font-size: 22px;
+}

@@ -74,7 +74,7 @@ router.post('/update/allrecipes', (req, res) => {
   }
 });
 
-router.post('/index/drop', (req, res) => {
+router.delete('/index', (req, res) => {
   res.app.db.crawlerHelper.drop()
     .then(() => {
       res.status(200).json({ message: 'Deleted all crawlerHelper' });
