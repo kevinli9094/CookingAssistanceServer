@@ -53,7 +53,7 @@ const removeIngredients = (db, id, ingredients) => db.user.findOne({ _id: Object
 // add user filtered dishes. Do not add duplication
 const addFilteredDishes = (db, id, dishes) => db.user.findOne({ _id: ObjectId(id) })
   .then((user) => {
-    if (!user.filteredDishes) {
+    if (!user.filteredDishes || user.filteredDishes.length === 0) {
       return updateUser(db, id, { filteredDishes: dishes });
     }
     const filtered = user.filteredDishes.filter((value) => !dishes.includes(value));
@@ -71,7 +71,7 @@ const removeFilteredDishes = (db, id, dishes) => db.user.findOne({ _id: ObjectId
     return updateUser(db, id, { filteredDishes: filtered });
   });
 
-const finduserById = (db, id) => db.user.findOne({ _id: ObjectId(id) });
+const findUserById = (db, id) => db.user.findOne({ _id: ObjectId(id) });
 
 module.exports = {
   allUsers,
@@ -82,5 +82,5 @@ module.exports = {
   removeIngredients,
   addFilteredDishes,
   removeFilteredDishes,
-  finduserById,
+  findUserById,
 };

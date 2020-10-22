@@ -1,12 +1,3 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
-}
-
 #notify_message {
   position: fixed;
   display: none;
@@ -17,4 +8,21 @@ a {
   width: 100%;
   text-align: center;
   font-size: 22px;
+}
+
+#navBar{
+  margin-top: 1rem;
+}
+
+.scroll_spy_body {
+  position: relative;
+}
+
+ul.nav-pills {
+  top: 20px;
+  position: fixed;
+}
+
+#userInfo{
+  margin-top: 20px;
 }

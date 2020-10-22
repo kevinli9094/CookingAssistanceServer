@@ -62,7 +62,7 @@ router.get('/user/search', (req, res) => {
     return;
   }
 
-  userDB.finduserById(res.app.db, userId)
+  userDB.findUserById(res.app.db, userId)
     .then((user) => {
       if (!user.ingredients) {
         return Promise.reject(new Error('user does not have any ingredient'));
