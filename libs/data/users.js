@@ -32,12 +32,13 @@ const removeUser = (db, id) => db.user.findOneAndDelete({ _id: ObjectId(id) })
 // add user owned ingredients. Do not add duplication
 const addIngredients = (db, id, ingredients) => db.user.findOne({ _id: ObjectId(id) })
   .then((user) => {
+    const trimedIngredients = ingredients.map((item) => item.trim());
     if (!user.ingredients) {
-      return updateUser(db, id, { ingredients });
+      return updateUser(db, id, { trimedIngredients });
     }
-    const filtered = user.ingredients.filter((value) => !ingredients.includes(value));
+    const filtered = user.ingredients.filter((value) => !trimedIngredients.includes(value));
 
-    return updateUser(db, id, { ingredients: filtered.concat(ingredients) });
+    return updateUser(db, id, { ingredients: filtered.concat(trimedIngredients) });
   });
 
 // remove user owned ingredients

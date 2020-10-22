@@ -1,5 +1,70 @@
-/* global showNotification */
+/* global showNotification isEmptyString */
 $(document).ready(() => {
+  // functions for modal's confirm buttons
+  const deleteRecipe = () => {
+    $.ajax({
+      method: 'DELETE',
+      url: '/recipes',
+    })
+      .done((msg) => {
+        showNotification(msg.message, 'success');
+      })
+      .fail((msg) => {
+        showNotification(msg.message, 'danger');
+      });
+  };
+
+  const resetIndex = () => {
+    $.ajax({
+      method: 'DELETE',
+      url: '/crawler/index',
+    })
+      .done((msg) => {
+        showNotification(msg.message, 'success');
+      })
+      .fail((msg) => {
+        showNotification(msg.message, 'danger');
+      });
+  };
+
+  const deleteUser = () => {
+    const userId = $('body').attr('data-user');
+    $.ajax({
+      method: 'DELETE',
+      url: '/users',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        userId,
+      }),
+    })
+      .done((msg) => {
+        showNotification(msg.message, 'success', false, '/');
+      })
+      .fail((msg) => {
+        showNotification(msg.message, 'danger');
+      });
+  };
+
+  const modalConfirmFunctionMap = {
+    deleteRecipe, resetIndex, deleteUser,
+  };
+
+  // setup bootstrap model
+  $('#modal').on('show.bs.modal', (event) => {
+    const button = $(event.relatedTarget); // Button that triggered the modal
+    const title = button.data('title');
+    const message = button.data('message');
+    const functionName = button.data('function');
+
+    const modal = $(this);
+    modal.find('.modal-title').text(title);
+    modal.find('.modal-body').text(message);
+
+    modal.find('#modalConfirmBtn').off('click').click(() => {
+      modalConfirmFunctionMap[functionName]();
+    });
+  });
+
   // create user button
   const createUserForm = $('#createUserForm');
   createUserForm.on('submit', (e) => {
@@ -36,8 +101,8 @@ $(document).ready(() => {
         url: '/crawler/init/allrecipes',
         contentType: 'application/json',
         data: JSON.stringify({
-          beginIndex: $('#inputBeginIndex').val(),
-          endIndex: $('#inputEndIndex').val(),
+          beginIndex: parseInt($('#inputBeginIndex').val(), 10),
+          endIndex: parseInt($('#inputEndIndex').val(), 10),
         }),
       })
         .done((msg) => {
@@ -60,7 +125,7 @@ $(document).ready(() => {
         url: '/crawler/init/allrecipes',
         contentType: 'application/json',
         data: JSON.stringify({
-          continueErrorCount: $('#inputErrorsToStop').val(),
+          continueErrorCount: parseInt($('#inputErrorsToStop').val(), 10),
         }),
       })
         .done((msg) => {
@@ -73,32 +138,6 @@ $(document).ready(() => {
     startUpdatingForm[0].classList.add('was-validated');
     e.preventDefault();
     e.stopPropagation();
-  });
-
-  $('#resetRecipesBtn').click(() => {
-    $.ajax({
-      method: 'DELETE',
-      url: '/recipes',
-    })
-      .done((msg) => {
-        showNotification(msg.message, 'success');
-      })
-      .fail((msg) => {
-        showNotification(msg.message, 'danger');
-      });
-  });
-
-  $('#resetIndexBtn').click(() => {
-    $.ajax({
-      method: 'DELETE',
-      url: '/crawler/index',
-    })
-      .done((msg) => {
-        showNotification(msg.message, 'success');
-      })
-      .fail((msg) => {
-        showNotification(msg.message, 'danger');
-      });
   });
 
   // user info buttons
@@ -161,7 +200,7 @@ $(document).ready(() => {
     e.stopPropagation();
   });
 
-  // filtered dishes button
+  // filtered dishes delete button
   $('#deleteFilteredDishesBtn').click(() => {
     const userId = $('body').attr('data-user');
     const dishesToDelete = [];
@@ -179,6 +218,62 @@ $(document).ready(() => {
       data: JSON.stringify({
         userId,
         dishes: dishesToDelete,
+      }),
+    })
+      .done((msg) => {
+        showNotification(msg.message, 'success', true);
+      })
+      .fail((msg) => {
+        showNotification(msg.message, 'danger');
+      });
+  });
+
+  // filtered dishes delete button
+  $('#deleteIngredientsBtn').click(() => {
+    const userId = $('body').attr('data-user');
+    const ingredientsToDelete = [];
+    // get all the selected ingredients
+    $('.ingredient-delete-checkbox').each((index, checkbox) => {
+      if (checkbox.checked) {
+        ingredientsToDelete.push(checkbox.getAttribute('data-ingredient'));
+      }
+    });
+
+    $.ajax({
+      method: 'PUT',
+      url: '/users/ingredients/remove',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        userId,
+        ingredients: ingredientsToDelete,
+      }),
+    })
+      .done((msg) => {
+        showNotification(msg.message, 'success', true);
+      })
+      .fail((msg) => {
+        showNotification(msg.message, 'danger');
+      });
+  });
+
+  $('#addIngredintsBtn').click(() => {
+    const userId = $('body').attr('data-user');
+    const input = $('#ingredientsInput').val();
+
+    if (isEmptyString(input)) {
+      showNotification('Ingredients field is empty.', 'warning');
+      return;
+    }
+
+    const inputs = input.split('+');
+
+    $.ajax({
+      method: 'PUT',
+      url: '/users/ingredients/add',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        userId,
+        ingredients: inputs,
       }),
     })
       .done((msg) => {

@@ -21,4 +21,18 @@ mixin target(item, unit, user, fieldName)
         input.custom-control-input(id!=`${item}DeleteCheckbox` type='checkbox')
         label.custom-control-label(for=`${item}DeleteCheckbox`) Delete
 
+mixin model
+  #modal.modal.fade
+    .modal-dialog
+      .modal-content
+        //- Modal Header
+        .modal-header
+          h4.modal-title
+          button.close(type='button' data-dismiss='modal') ×
+        //- Modal body
+        .modal-body
+        //- Modal footer
+        .modal-footer
+          button.btn.btn-primary(type='button' data-dismiss='modal') Close
+          button#modalConfirmBtn.btn.btn-danger(type='button') Confirm
       
