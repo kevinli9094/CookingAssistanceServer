@@ -17,7 +17,7 @@ html
 
     link(rel='stylesheet', href='/stylesheets/style.css')
   body.scroll_spy_body(data-spy='scroll' data-target='#navList' data-offset="50" data-user=userId)
-    #notify_message
+    +header(userId)
     .container-fluid
       .row
         nav#navList.col-sm-3.col-4.border-right
@@ -85,5 +85,3 @@ html
 
           #deleteUser.h-50.mt-5
             button.btn.btn-danger.btn-lg.btn-block(data-toggle="modal" data-target="#modal" data-title='Delete User' data-message='Are you sure you want to delete the current user?' data-function='deleteUser') delete user
-
-          +model

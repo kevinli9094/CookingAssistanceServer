@@ -50,13 +50,13 @@ $(document).ready(() => {
   };
 
   // setup bootstrap model
-  $('#modal').on('show.bs.modal', (event) => {
+  const modal = $('#modal');
+  modal.on('show.bs.modal', (event) => {
     const button = $(event.relatedTarget); // Button that triggered the modal
     const title = button.data('title');
     const message = button.data('message');
     const functionName = button.data('function');
 
-    const modal = $(this);
     modal.find('.modal-title').text(title);
     modal.find('.modal-body').text(message);
 

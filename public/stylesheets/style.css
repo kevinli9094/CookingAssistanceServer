@@ -19,10 +19,16 @@
 }
 
 ul.nav-pills {
-  top: 20px;
-  position: fixed;
+  position: -webkit-sticky;
+  position: sticky;
+  top:0;
+  padding-top:20px;
 }
 
 #userInfo{
   margin-top: 20px;
+}
+
+#navList{
+  top: -1rem;
 }

@@ -35,4 +35,19 @@ mixin model
         .modal-footer
           button.btn.btn-primary(type='button' data-dismiss='modal') Close
           button#modalConfirmBtn.btn.btn-danger(type='button') Confirm
+
+mixin header(userId)
+  header
+    ul.nav#navBar
+      li.nav-item
+        a.nav-link(href='/') Home
+      if userId
+        li.nav-item
+        a.nav-link(href=`/page/user/edit/${userId}`) User Info
+      li.nav-item
+        a.nav-link(href='/page/admin') Admin
+    hr
+    #notify_message
+    +model
+    
       
