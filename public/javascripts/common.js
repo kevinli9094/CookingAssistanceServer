@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars, no-param-reassign */
 // show notification popup
-function showNotification(msg, type, reloadPage, redirect) {
+const showNotification = (msg, type, reloadPage, redirect) => {
   // defaults to false
   reloadPage = reloadPage || false;
 
@@ -23,4 +23,6 @@ function showNotification(msg, type, reloadPage, redirect) {
       window.location.reload();
     }
   });
-}
+};
+
+const isEmptyString = (str) => (str.length === 0 || !str.trim());

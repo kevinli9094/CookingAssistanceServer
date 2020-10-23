@@ -21,8 +21,5 @@ block content
                 .col-auto
                     button.btn.btn-primary(type='submit') Start updating
 
-        button#resetRecipesBtn.btn.btn-danger.btn-block.mt-5 reset recipes
-        button#resetIndexBtn.btn.btn-danger.btn-block.mt-3 reset all index
-
-        
-
+        button.btn.btn-danger.btn-block.mt-5(data-toggle="modal" data-target="#modal" data-title='Reset Recipes' data-message='Are you sure you want to delete all stored recipes?' data-function='deleteRecipe') reset recipes
+        button.btn.btn-danger.btn-block.mt-3(data-toggle="modal" data-target="#modal" data-title='Reset Index' data-message='Are you sure you want to delete stored indexes for crawling?' data-function='resetIndex') reset all index

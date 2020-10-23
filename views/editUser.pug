@@ -28,13 +28,11 @@ html
               li.nav-item
               a.nav-link(href='#filteredDishes') Filtered Dishes
             li.nav-item
-              a.nav-link(href='#section3') Section 3
-            li.nav-item.dropdown
-              a.nav-link.dropdown-toggle(data-toggle='dropdown' href='#') Section 4
-              .dropdown-menu
-                a.dropdown-item(href='#section41') Link 1
-                a.dropdown-item(href='#section42') Link 2
+              a.nav-link(href='#ingredients') Ingredients
+            li.nav-item
+              a.nav-link(href='#deleteUser') Delete User
         .col-sm-9.col-8
+          
           #userInfo
             h1 User Info
             form#updateUserForm(novalidate)
@@ -53,25 +51,39 @@ html
                     +target('carbohydrate', 'g', user, 'carbohydrateContent')
                     +target('cholesterol', 'mg', user, 'cholesterolContent')
                     button.btn.btn-primary.mt-4.btn-block(type='submit') Update name and daily target
+          
           if filteredDishes
             #filteredDishes.mt-5
               h1 Filtered Dishes
-              form
-                .col-md-9.mx-3
-                  for filteredDish in filteredDishes
-                    .form-row
+              form.col-md-9.mx-3
+                for filteredDish in filteredDishes
+                  .form-row
+                    .form-group.col-md-5
+                      label=filteredDish.name
+                    .form-group.col-md-3.custom-control.custom-checkbox
+                      input.custom-control-input.filtered-dish-delete-checkbox(id=`${filteredDish._id}DeleteCheckbox` type='checkbox' data-dish-id=filteredDish._id)
+                      label.custom-control-label(for=`${filteredDish._id}DeleteCheckbox`) Delete
+                button#deleteFilteredDishesBtn.btn.btn-primary delete all selected filtered dishes
+          
+          #ingredients.mt-5
+            h1 Ingredients
+            form.col-md-9.mx-3
+              if user.ingredients && user.ingredients.length > 0
+                for ingredient in user.ingredients
+                  .form-row
                       .form-group.col-md-5
-                        label=filteredDish.name
+                        label=ingredient
                       .form-group.col-md-3.custom-control.custom-checkbox
-                        input.custom-control-input.filtered-dish-delete-checkbox(id=`${filteredDish._id}DeleteCheckbox` type='checkbox' data-dish-id=filteredDish._id)
-                        label.custom-control-label(for=`${filteredDish._id}DeleteCheckbox`) Delete
-                  button#deleteFilteredDishesBtn.btn.btn-primary delete all selected filtered dishes
-          #section3.bg-secondary.h-75
-            h1 Section 3
-            p Try to scroll this section and look at the navigation list while scrolling!
-          #section41.bg-danger.h-75
-            h1 Section 4-1
-            p Try to scroll this section and look at the navigation list while scrolling!
-          #section42.bg-info.h-75
-            h1 Section 4-2
-            p Try to scroll this section and look at the navigation list while scrolling!
+                        input.custom-control-input.ingredient-delete-checkbox(id=`${ingredient}DeleteCheckbox` type='checkbox' data-ingredient=ingredient)
+                        label.custom-control-label(for=`${ingredient}DeleteCheckbox`) Delete
+                button#deleteIngredientsBtn.btn.btn-primary delete all selected ingredients
+              .form-row.mt-3
+                input.col-md-9.form-control(id!='ingredientsInput' type='text', placeholder='ingredints separated by "+"')
+                button#addIngredintsBtn.btn.btn-primary.ml-2 add ingredints
+
+
+
+          #deleteUser.h-50.mt-5
+            button.btn.btn-danger.btn-lg.btn-block(data-toggle="modal" data-target="#modal" data-title='Delete User' data-message='Are you sure you want to delete the current user?' data-function='deleteUser') delete user
+
+          +model
