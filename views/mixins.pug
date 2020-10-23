@@ -1,0 +1,38 @@
+//-  eg: +target(protein, g, userObject, fieldName)
+mixin target(item, unit, user, fieldName)
+  h5=item
+  .form-row.mt-2
+    .form-group.col-md-3
+      select.custom-select(id!=`${item}StrategyInput`)
+        if user.dailyTarget && user.dailyTarget[fieldName] && user.dailyTarget[fieldName].strategy === 'at least'
+          option(value='at most' ) at most
+          option(value='at least' selected ) at least
+        else
+          option(value='at most' selected ) at most
+          option(value='at least' ) at least
+    .form-group.col-md-3
+      .input-group
+        input.form-control(id!=`${item}ValueInput` type='number', value=user.dailyTarget && user.dailyTarget[fieldName] && user.dailyTarget[fieldName].value)
+        if unit
+          .input-group-append
+            span.input-group-text=`${unit}`
+    .form-group.col-md-3
+      .custom-control.custom-checkbox
+        input.custom-control-input(id!=`${item}DeleteCheckbox` type='checkbox')
+        label.custom-control-label(for=`${item}DeleteCheckbox`) Delete
+
+mixin model
+  #modal.modal.fade
+    .modal-dialog
+      .modal-content
+        //- Modal Header
+        .modal-header
+          h4.modal-title
+          button.close(type='button' data-dismiss='modal') ×
+        //- Modal body
+        .modal-body
+        //- Modal footer
+        .modal-footer
+          button.btn.btn-primary(type='button' data-dismiss='modal') Close
+          button#modalConfirmBtn.btn.btn-danger(type='button') Confirm
+      

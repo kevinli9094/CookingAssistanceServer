@@ -91,7 +91,7 @@ Description: Creates a new user. See [newUser.json](../libs/schema/newUser.json)
 
 ### `DELETE /users`
 
-Input: `id` in request body\
+Input: `userId` in request body\
 Description: Deletes a user by id.
 
 ### `PUT /users/edit`

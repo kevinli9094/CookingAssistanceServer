@@ -17,11 +17,11 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
     header
-      ul.nav
+      ul.nav#navBar
         li.nav-item
           a.nav-link(href='/') Home
         li.nav-item
           a.nav-link(href='/page/admin') Admin
       hr
-      <div id="notify_message"></div>
+      #notify_message
     block content

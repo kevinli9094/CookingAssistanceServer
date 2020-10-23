@@ -72,8 +72,19 @@ const searchRecipe = (db, terms, page, perPage, user, minRating, requirements) =
       .then((count) => Promise.resolve({ items, totalPageCount: Math.ceil(count / perPage) })));
 };
 
+const getRecipesFromIds = (db, ids) => {
+  const query = {
+    _id: {
+      $in: ids.map((id) => ObjectId(id)),
+    },
+  };
+
+  return db.recipes.find(query).toArray();
+};
+
 module.exports = {
   storeIfNeeded,
   randomRecipe,
   searchRecipe,
+  getRecipesFromIds,
 };
