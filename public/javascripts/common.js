@@ -26,3 +26,15 @@ const showNotification = (msg, type, reloadPage, redirect) => {
 };
 
 const isEmptyString = (str) => (str.length === 0 || !str.trim());
+
+const visibleField = {
+  calories: null,
+  carbohydrate: 'g',
+  cholesterol: 'mg',
+  fat: 'g',
+  fiber: 'g',
+  protein: 'g',
+  saturatedFat: 'g',
+  sodium: 'mg',
+  sugar: 'g',
+};

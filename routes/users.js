@@ -162,13 +162,59 @@ router.put('/filtered/dishes/remove', (req, res) => {
   const schemaResult = validateJson('stringArray', dishes);
   if (!schemaResult.result) {
     res.status(400).json({
-      message: 'Failed to add ingredients. Check inputs.',
+      message: 'Failed to remove filtered dish. Check inputs.',
       error: schemaResult.errors,
     });
     return;
   }
 
   usersDb.removeFilteredDishes(res.app.db, userId, dishes)
+    .then(() => {
+      res.status(200).json({ message: 'ok' });
+    })
+    .catch((error) => {
+      defaultLogger.error(error.stack);
+      res.status(400).json({ message: 'fail to update user' });
+    });
+});
+
+router.put('/selected/dishes/add', (req, res) => {
+  const { userId } = req.body;
+  const { dishes } = req.body;
+
+  const schemaResult = validateJson('stringArray', dishes);
+  if (!schemaResult.result) {
+    res.status(400).json({
+      message: 'Failed to add dishes. Check inputs.',
+      error: schemaResult.errors,
+    });
+    return;
+  }
+
+  usersDb.addSelectedDishes(res.app.db, userId, dishes)
+    .then(() => {
+      res.status(200).json({ message: 'ok' });
+    })
+    .catch((error) => {
+      defaultLogger.error(error.stack);
+      res.status(400).json({ message: 'fail to update user' });
+    });
+});
+
+router.put('/selected/dishes/remove', (req, res) => {
+  const { userId } = req.body;
+  const { dishes } = req.body;
+
+  const schemaResult = validateJson('stringArray', dishes);
+  if (!schemaResult.result) {
+    res.status(400).json({
+      message: 'Failed to remove dishes. Check inputs.',
+      error: schemaResult.errors,
+    });
+    return;
+  }
+
+  usersDb.removeSelecteddDishes(res.app.db, userId, dishes)
     .then(() => {
       res.status(200).json({ message: 'ok' });
     })

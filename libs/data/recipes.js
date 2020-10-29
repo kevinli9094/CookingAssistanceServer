@@ -37,13 +37,15 @@ const searchRecipe = (db, terms, page, perPage, user, minRating, requirements) =
 
   if (user) {
     // check what dishes needed to be filtered
+    let filterById = [];
     if (user.filteredDishes && user.filteredDishes.length > 0) {
-      const filterById = user.filteredDishes;
-      if (user.selectedDishes && user.selectedDishes.length > 0) {
-        filterById.concat(user.selectedDishes);
-      }
-      query._id = { $nin: filterById.map((idStr) => ObjectId(idStr)) };
+      filterById = filterById.concat(user.filteredDishes);
     }
+
+    if (user.selectedDishes && user.selectedDishes.length > 0) {
+      filterById = filterById.concat(user.selectedDishes);
+    }
+    query._id = { $nin: filterById.map((idStr) => ObjectId(idStr)) };
   }
 
   // only show dishes that meets the requirement

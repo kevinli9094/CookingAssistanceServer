@@ -10,10 +10,6 @@
   font-size: 22px;
 }
 
-#navBar{
-  margin-top: 1rem;
-}
-
 .scroll_spy_body {
   position: relative;
 }
@@ -23,12 +19,21 @@ ul.nav-pills {
   position: sticky;
   top:0;
   padding-top:20px;
+  height: 100vh;
 }
 
-#userInfo{
-  margin-top: 20px;
+#navBar{
+  background-color: white;
 }
 
 #navList{
   top: -1rem;
+  position : fixed;
+  margin-top: 41px;
+  padding-top:20px
+}
+
+.main{
+  margin-top: 41px;
+  padding-top: 20px;
 }

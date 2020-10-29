@@ -34,7 +34,7 @@ const addIngredients = (db, id, ingredients) => db.user.findOne({ _id: ObjectId(
   .then((user) => {
     const trimedIngredients = ingredients.map((item) => item.trim());
     if (!user.ingredients) {
-      return updateUser(db, id, { trimedIngredients });
+      return updateUser(db, id, { ingredients: trimedIngredients });
     }
     const filtered = user.ingredients.filter((value) => !trimedIngredients.includes(value));
 
@@ -72,6 +72,27 @@ const removeFilteredDishes = (db, id, dishes) => db.user.findOne({ _id: ObjectId
     return updateUser(db, id, { filteredDishes: filtered });
   });
 
+// add user selected dishes
+const addSelectedDishes = (db, id, dishes) => db.user.findOne({ _id: ObjectId(id) })
+  .then((user) => {
+    if (!user.selectedDishes || user.selectedDishes.length === 0) {
+      return updateUser(db, id, { selectedDishes: dishes });
+    }
+    const filtered = user.selectedDishes.filter((value) => !dishes.includes(value));
+
+    return updateUser(db, id, { selectedDishes: filtered.concat(dishes) });
+  });
+
+// remmove user selected dishes
+const removeSelecteddDishes = (db, id, dishes) => db.user.findOne({ _id: ObjectId(id) })
+  .then((user) => {
+    if (!user.selectedDishes) {
+      return Promise.resolve();
+    }
+    const filtered = user.selectedDishes.filter((value) => !dishes.includes(value));
+    return updateUser(db, id, { selectedDishes: filtered });
+  });
+
 const findUserById = (db, id) => db.user.findOne({ _id: ObjectId(id) });
 
 module.exports = {
@@ -83,5 +104,7 @@ module.exports = {
   removeIngredients,
   addFilteredDishes,
   removeFilteredDishes,
+  addSelectedDishes,
+  removeSelecteddDishes,
   findUserById,
 };
