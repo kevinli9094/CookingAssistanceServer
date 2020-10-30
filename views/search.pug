@@ -49,7 +49,7 @@ block content
                 else
                     //- display recipes
                     for recipe in result.items
-                        .col-10.offset-1.border.p-2.mt-4.bg-light
+                        .col-10.offset-1.border.p-2.mt-4.bg-light.recipeItem
                             .row(data-dish=recipe._id)
                                 .col-3
                                     img.img-thumbnail(src=recipe.img alt=recipe.name)

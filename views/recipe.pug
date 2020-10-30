@@ -1,0 +1,83 @@
+extends layout
+
+block content
+    .container-fluid.main
+        .col-md-7.offset-md-1
+            h2=recipe.name
+            .row
+                .col-3
+                    img.img-thumbnail(src=recipe.img alt=recipe.name)
+                .col-9
+                    if recipe.rating && recipe.rating.value && recipe.rating.count
+                        div
+                            span.font-weight-bold Rating: 
+                            | #{`${recipe.rating.value.toFixed(1)}/10 - ${recipe.rating.count} reviews`}
+                    -
+                        const timeToString = (str)=>{
+                            let indexOfH = str.indexOf('H')
+                            const indexOfM = str.indexOf('M')
+                            let hour = 0
+                            let minute = 0
+
+                            if(!indexOfH || indexOfH < 0){
+                                indexOfH = 0
+                            }
+
+                            if(indexOfH > 0){
+                                hour = parseInt(str.substring(0, indexOfH),10)
+                            }
+
+                            if(indexOfM > 0){
+                                minute = parseInt(str.substring(indexOfH + 1, indexOfM),10)
+                            }
+
+                            let result = '';
+                            if(hour && hour > 0){
+                                result += hour + ' hour'
+                            }
+                            if(minute && minute > 0){
+                                if(result.length > 0){
+                                    result += ' and '
+                                }
+                                result += minute + ' minute'
+                            }
+
+                            return result
+                        } 
+                    if recipe.prepTime
+                        div
+                            span.font-weight-bold Prep time: 
+                            | #{timeToString(recipe.prepTime)}
+                    if recipe.cookTime
+                        div
+                            span.font-weight-bold Cook time: 
+                            | #{timeToString(recipe.cookTime)}
+                    if recipe.totalTime
+                        div
+                            span.font-weight-bold Total time: 
+                            | #{timeToString(recipe.totalTime)}
+                    div
+                        a(href=recipe.originUrl) Click to see original page
+            p.mt-2
+                h2 Description: 
+                | #{recipe.description}
+
+            div
+                h2 Ingredients:
+                for ingredient, index in recipe.ingredients
+                    p
+                        span.font-weight-bold=`${index+1}: `
+                        | #{ingredient}
+
+            div
+                h2 Instruction:
+                for instruction in recipe.instructions
+                    p=`- ${instruction}`
+            
+            div.mb-5
+                h2 Nutrition:
+                //- need to convert nutrition to visibale one
+                for nutritionItem in Object.entries(recipe.nutrition)
+                    - const displayField = fieldMap[nutritionItem[0]]
+                    - const unit = unitMap[nutritionItem[0]] || ''
+                    div=`${displayField} : ${nutritionItem[1].toFixed(1)} ${unit}`

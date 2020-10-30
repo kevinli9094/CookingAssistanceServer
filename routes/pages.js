@@ -145,4 +145,23 @@ router.get('/search', (req, res) => {
       res.render('error', { message: 'Unable to search for recipes', error });
     });
 });
+
+router.get('/recipe/:id', (req, res) => {
+  const recipeId = req.params.id;
+
+  recipesDB.getRecipesFromIds(res.app.db, [recipeId])
+    .then((result) => {
+      const recipe = result[0];
+      res.render('recipe', {
+        title: recipe.name,
+        recipe,
+        fieldMap: commonjs.actualToVisibleFieldMap,
+        unitMap: commonjs.standaradUnit,
+      });
+    })
+    .catch((error) => {
+      res.render('error', { message: 'Unable to retrive recipe', error });
+    });
+});
+
 module.exports = router;
