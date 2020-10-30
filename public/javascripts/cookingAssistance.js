@@ -360,10 +360,10 @@ $(document).ready(() => {
     }
 
     // append requirement
-    $('.requirementForm').each((event) => {
-      const field = $(event.currentTarget).find('.requirementField').val();
-      const strategy = $(event.currentTarget).find('.requirementStrategy').val();
-      const value = $(event.currentTarget).find('.requirementValue').val();
+    $('.requirementForm').each((index, element) => {
+      const field = $(element).find('.requirementField').val();
+      const strategy = $(element).find('.requirementStrategy').val();
+      const value = $(element).find('.requirementValue').val();
 
       if (field && strategy && value) {
         url += `&${field}[strategy]=${strategy}&${field}[value]=${value}`;
@@ -387,6 +387,7 @@ $(document).ready(() => {
   });
 
   $('.addDishBtn').click((event) => {
+    event.stopPropagation();
     const userId = $('#navBar').attr('data-user');
     // get recipe name and id
     const container = $(event.currentTarget).closest('.row');
@@ -459,6 +460,7 @@ $(document).ready(() => {
   });
 
   $('.filterDishBtn').click((event) => {
+    event.stopPropagation();
     const userId = $('#navBar').attr('data-user');
     // get recipe name and id
     const container = $(event.currentTarget).closest('.row');
@@ -485,5 +487,11 @@ $(document).ready(() => {
       .fail((msg) => {
         showNotification(msg.message, 'danger');
       });
+  });
+
+  $('.recipeItem').click((event) => {
+    const dishId = $(event.currentTarget).find('.row').data('dish');
+
+    window.location = `/page/recipe/${dishId}`;
   });
 });

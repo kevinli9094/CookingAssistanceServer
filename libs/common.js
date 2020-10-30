@@ -29,6 +29,18 @@ const visibleToActualFieldMap = {
   sugar: 'sugarContent',
 };
 
+const actualToVisibleFieldMap = {
+  calories: 'calories',
+  carbohydrateContent: 'carbohydrate',
+  cholesterolContent: 'cholesterol',
+  fatContent: 'fat',
+  fiberContent: 'fiber',
+  proteinContent: 'protein',
+  saturatedFatContent: 'saturatedFat',
+  sodiumContent: 'sodium',
+  sugarContent: 'sugar',
+};
+
 const convertUnitInNutrition = (nutritionInfo) => {
   const result = {};
 
@@ -58,5 +70,6 @@ module.exports = {
   standaradUnit,
   visibleField,
   visibleToActualFieldMap,
+  actualToVisibleFieldMap,
   convertUnitInNutrition,
 };
