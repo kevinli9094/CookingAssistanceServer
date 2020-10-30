@@ -1,0 +1,110 @@
+extends layout
+
+block content
+    .container-fluid
+        .row
+            if user
+                nav#navList.col-2.border-right.vh-100
+                    h5 Dishes for today:
+                    
+                    if userSelectedDishes
+                        for selectedDish in userSelectedDishes
+                            div.border.selected-dish.p-2.mt-2(data-dish=selectedDish._id)
+                                label.col-10.small.px-0=selectedDish.name
+                                button.removeSelectedDishBtn.close.col-2(type='button' aria-label='Close') -
+                    else
+                        div.border.selected-dish.p-2.mt-2.d-none
+                            label.col-10.small.px-0
+                            button.removeSelectedDishBtn.close.col-2(type='button' aria-label='Close') -
+            - let contentClass = 'main col-10'
+            if userId
+                - contentClass += ` ml-auto`
+            else
+                - contentClass += ' mx-auto' 
+            div(class=contentClass)
+                form#searchForm(novalidate)
+                    input#queryInput.form-control(type="text" placeholder='Search here' value=searchQuery )
+
+                    div.border.my-3.p-4
+                        .form-group.row
+                            label.col-auto minimun rating:
+                            input#minRatingInput.form-control.col-2(type='number' step='0.01' value=minRating)
+                            label.col-auto (any number from 0 - 10)
+                        .form-group.row.mt-2
+                            label.col-auto items per page:
+                            input#limitInput.form-control.col-2(type='number' step='1' value=limit)
+                        div#requirements
+                            +requirement(fields)
+                            if requirements
+                                for singleRequirement in Object.entries(requirements)
+                                    - const key = singleRequirement[0]
+                                    - const dietGoal = singleRequirement[1]
+                                    +requirement(fields, key, dietGoal)
+                            
+                            button#addRequirementBtn.btn.btn-primary.mt-2(type='button') Add requirement
+                    button#searchBtn.btn.btn-primary.btn-block.mt-3(type='button') Search
+
+                if !result || !result.items || result.items.length === 0
+                    h6.text-center No result
+                else
+                    //- display recipes
+                    for recipe in result.items
+                        .col-10.offset-1.border.p-2.mt-4.bg-light
+                            .row(data-dish=recipe._id)
+                                .col-3
+                                    img.img-thumbnail(src=recipe.img alt=recipe.name)
+                                .col-7
+                                    h3.recipeName=recipe.name
+                                    h5=`rating: ${recipe.rating.value.toFixed(1)}`
+                                    h5=`description: ${recipe.description}`
+                                if userId
+                                    .col-2.my-auto
+                                        button.addDishBtn.btn.btn-primary.w-75.mb-4 Add
+                                        button.filterDishBtn.btn.btn-primary.w-75 Filter
+
+                    //- pagination
+                    - const totalPageCount = result.totalPageCount
+                    - let totalDisplayPage = 10
+                    - let previousPageCount = 4
+                    - let selectedPage = parseInt(page, 10)
+                    - let afterPage = page
+                    ul.pagination.justify-content-center.my-5
+                        //- previous
+                        if(selectedPage != 1)
+                            li.page-item
+                                a.page-link(data-page=selectedPage-1) previous
+                        else 
+                            li.page-item.disabled
+                                a.page-link previous
+                        
+                        //- pages before selected page
+                        while previousPageCount>0
+                            - const currentPage = selectedPage - previousPageCount
+                            if(selectedPage - previousPageCount > 0)
+                                li.page-item
+                                    a.page-link(data-page=currentPage)=currentPage
+                                - totalDisplayPage -= 1
+                            - previousPageCount -= 1
+                            
+                        
+                        //- selected page
+                        li.page-item.active
+                            a.page-link(href='#')=selectedPage
+                        - totalDisplayPage -= 1
+
+                        //- pages after selected page
+                        while totalDisplayPage>0 && afterPage + 1 <= totalPageCount
+                            - afterPage += 1
+                            li.page-item
+                                a.page-link(data-page=afterPage)=afterPage
+                            - totalDisplayPage -= 1
+                        
+                        //- next
+                        if(selectedPage != totalPageCount)
+                            li.page-item
+                                a.page-link(data-page=selectedPage + 1) next
+                        else
+                            li.page-item.disabled
+                                a.page-link next
+
+                    

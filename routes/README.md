@@ -18,6 +18,8 @@
     + [`PUT /users/ingredients/remove`](#put-usersingredientsremove)
     + [`PUT /users/filtered/dishes/add`](#put-usersfiltereddishesadd)
     + [`PUT /users/filtered/dishes/remove`](#put-usersfiltereddishesremove)
+    + [`PUT /users/selected/dishes/add`](#put-usersselecteddishesadd)
+    + [`PUT /users/selected/dishes/remove`](#put-usersselecteddishesremove)
 
 # End points
 
@@ -115,6 +117,16 @@ Input: `userId`(string) and `dishes`(array of string) in request body\
 Description: Add `dishes` to the user with `userId` such that everything in `dishes` will be filtered out during search.
 
 ### `PUT /users/filtered/dishes/remove`
+
+Input: `userId`(string) and `dishes`(array of string) in request body\
+Description: Remove `dishes` from the user with `userId`.
+
+### `PUT /users/selected/dishes/add`
+
+Input: `userId`(string) and `dishes`(array of string) in request body\
+Description: Add `dishes` to the user with `userId` to indicate the user will be making the selected dishes.
+
+### `PUT /users/selected/dishes/remove`
 
 Input: `userId`(string) and `dishes`(array of string) in request body\
 Description: Remove `dishes` from the user with `userId`.

@@ -16,11 +16,11 @@ html
     script(src='/javascripts/cookingAssistance.js')
 
     link(rel='stylesheet', href='/stylesheets/style.css')
-  body.scroll_spy_body(data-spy='scroll' data-target='#navList' data-offset="50" data-user=userId)
-    +header(userId)
+  body.scroll_spy_body(data-spy='scroll' data-target='#navList' data-offset="50")
     .container-fluid
+      +header(userId)
       .row
-        nav#navList.col-sm-3.col-4.border-right
+        nav#navList.col-2.border-right
           ul.nav.nav-pills.flex-column
             li.nav-item
               a.nav-link.active(href='#userInfo') User Info
@@ -31,8 +31,8 @@ html
               a.nav-link(href='#ingredients') Ingredients
             li.nav-item
               a.nav-link(href='#deleteUser') Delete User
-        .col-sm-9.col-8
-          
+
+        .main.col-10.ml-auto
           #userInfo
             h1 User Info
             form#updateUserForm(novalidate)

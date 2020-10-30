@@ -1,7 +1,7 @@
 const { unit } = require('mathjs');
 const { defaultLogger } = require('./loggers');
 
-const standaradunit = {
+const standaradUnit = {
   carbohydrateContent: 'g',
   cholesterolContent: 'mg',
   fatContent: 'g',
@@ -13,6 +13,20 @@ const standaradunit = {
   sugarContent: 'g',
   transFatContent: null,
   unsaturatedFatContent: null,
+};
+
+const visibleField = ['calories', 'carbohydrate', 'cholesterol', 'fat', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar'];
+
+const visibleToActualFieldMap = {
+  calories: 'calories',
+  carbohydrate: 'carbohydrateContent',
+  cholesterol: 'cholesterolContent',
+  fat: 'fatContent',
+  fiber: 'fiberContent',
+  protein: 'proteinContent',
+  saturatedFat: 'saturatedFatContent',
+  sodium: 'sodiumContent',
+  sugar: 'sugarContent',
 };
 
 const convertUnitInNutrition = (nutritionInfo) => {
@@ -28,8 +42,8 @@ const convertUnitInNutrition = (nutritionInfo) => {
           result[key] = parseFloat(value);
           break;
         default:
-          if (standaradunit[key]) {
-            result[key] = unit(value).toNumber(standaradunit[key]);
+          if (standaradUnit[key]) {
+            result[key] = unit(value).toNumber(standaradUnit[key]);
           } else {
             defaultLogger.warn(`unrecognized key while converting unit: ${key}`);
           }
@@ -41,6 +55,8 @@ const convertUnitInNutrition = (nutritionInfo) => {
 };
 
 module.exports = {
-  standaradunit,
+  standaradUnit,
+  visibleField,
+  visibleToActualFieldMap,
   convertUnitInNutrition,
 };

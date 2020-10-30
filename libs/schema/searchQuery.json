@@ -1,0 +1,45 @@
+{
+    "$id": "searchQuery",
+    "type": "object",
+    "properties": {
+        "page": {
+            "type": "string",
+            "pattern": "[0-9]*"
+        },
+        "limit": {
+            "type": "string",
+            "pattern": "[0-9]*"
+        },
+        "minRating": {
+            "type": "string"
+        },
+        "searchQuery": {
+            "type": "string"
+        },
+        "calories": {
+            "$ref": "dietGoalString"
+        },
+        "protein": {
+            "$ref": "dietGoalString"
+        },
+        "sugar": {
+            "$ref": "dietGoalString"
+        },
+        "sodium": {
+            "$ref": "dietGoalString"
+        },
+        "fat": {
+            "$ref": "dietGoalString"
+        },
+        "fiber": {
+            "$ref": "dietGoalString"
+        },
+        "carbohydrate": {
+            "$ref": "dietGoalString"
+        },
+        "cholesterol": {
+            "$ref": "dietGoalString"
+        }
+    },
+    "additionalProperties": false
+}

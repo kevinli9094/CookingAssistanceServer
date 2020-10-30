@@ -21,6 +21,40 @@ mixin target(item, unit, user, fieldName)
         input.custom-control-input(id!=`${item}DeleteCheckbox` type='checkbox')
         label.custom-control-label(for=`${item}DeleteCheckbox`) Delete
 
+mixin requirement(fields, key, dietGoal)
+  if key && dietGoal
+    .form-row.mt-2.requirementForm
+      select.custom-select.col-2.mx-2.requirementField
+        option(value=null) Choose...
+        for field in fields
+          if key === field
+            option(value=field selected)=field
+          else
+            option(value=field)=field
+      select.custom-select.col-1.mx-2.requirementStrategy
+        if dietGoal.strategy === 'at least'
+          option(value='at least' selected) at least
+          option(value='at most') at most
+        else
+          option(value='at least') at least
+          option(value='at most' selected) at most
+      input.form-control.col-1.mx-3.requirementValue(type='number' value=dietGoal.value)
+      label.unit
+      button.btn.btn-primary.col-1.mx-2.removeRowBtn remove
+  else
+    .form-row.mt-2.d-none.requirementForm
+      select.custom-select.col-2.mx-2.requirementField
+        option(selected) Choose...
+        for field in fields
+          option(value=field)=field
+      select.custom-select.col-1.mx-2.requirementStrategy
+        option(value='at least') at least
+        option(value='at most') at most
+      input.form-control.col-1.mx-3.requirementValue(type='number')
+      //- todo: deal with the unit later
+      label.unit
+      button.btn.btn-primary.col-1.mx-2.removeRowBtn remove
+
 mixin model
   #modal.modal.fade
     .modal-dialog
@@ -37,17 +71,15 @@ mixin model
           button#modalConfirmBtn.btn.btn-danger(type='button') Confirm
 
 mixin header(userId)
-  header
-    ul.nav#navBar
+  ul#navBar.nav.fixed-top.border-bottom(data-user=userId)
+    li.nav-item
+      a.nav-link(href='/') Home
+    if userId
       li.nav-item
-        a.nav-link(href='/') Home
-      if userId
-        li.nav-item
-        a.nav-link(href=`/page/user/edit/${userId}`) User Info
-      li.nav-item
-        a.nav-link(href='/page/admin') Admin
-    hr
-    #notify_message
-    +model
+      a.nav-link(href=`/page/user/edit/${userId}`) User Info
+    li.nav-item
+      a.nav-link(href='/page/admin') Admin
+  #notify_message
+  +model
     
       
