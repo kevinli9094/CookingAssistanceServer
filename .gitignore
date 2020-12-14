@@ -2,6 +2,9 @@
 .directory
 *~
 
+#python
+__pycache__
+
 
 # npm
 node_modules

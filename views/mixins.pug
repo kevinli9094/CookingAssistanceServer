@@ -68,7 +68,7 @@ mixin model
         //- Modal footer
         .modal-footer
           button.btn.btn-primary(type='button' data-dismiss='modal') Close
-          button#modalConfirmBtn.btn.btn-danger(type='button') Confirm
+          button#modalConfirmBtn.btn.btn-danger(type='button' data-dismiss='modal') Confirm
 
 mixin header(userId)
   ul#navBar.nav.fixed-top.border-bottom(data-user=userId)

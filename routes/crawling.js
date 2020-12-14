@@ -1,8 +1,13 @@
 const express = require('express');
 const { Worker } = require('worker_threads');
+const {spawn} = require('child_process');
+const { crawlerLogger } = require('../libs/loggers');
+const { getConfig } = require('../libs/config');
 const path = require('path');
 
-let onGoingWork = false;
+const config = getConfig();
+let onGoingAllRecipesWork = false;
+let onGoingXiachufanWork = false;
 
 const router = express.Router();
 
@@ -33,10 +38,10 @@ const validateUpdateinput = (req) => {
 router.post('/init/allrecipes', (req, res) => {
   if (!validateInitInput(req)) {
     res.status(422).json({ message: 'Please provide valid beginIndex and endIndex.' });
-  } else if (onGoingWork) {
+  } else if (onGoingAllRecipesWork) {
     res.status(200).json({ message: 'OnGoingTask exist' });
   } else {
-    onGoingWork = true;
+    onGoingAllRecipesWork = true;
 
     const data = {
       beginIndex: req.body.beginIndex,
@@ -46,7 +51,7 @@ router.post('/init/allrecipes', (req, res) => {
     const worker = new Worker(workerPath, { workerData: data });
 
     worker.on('exit', () => {
-      onGoingWork = false;
+      onGoingAllRecipesWork = false;
     });
 
     res.status(200).json({ message: 'Start crawling' });
@@ -57,17 +62,17 @@ router.post('/init/allrecipes', (req, res) => {
 router.post('/update/allrecipes', (req, res) => {
   if (!validateUpdateinput(req)) {
     res.status(422).json({ message: 'Please provide valid continueErrorCount.' });
-  } else if (onGoingWork) {
+  } else if (onGoingAllRecipesWork) {
     res.status(200).json({ message: 'onGoingTask exist' });
   } else {
-    onGoingWork = true;
+    onGoingAllRecipesWork = true;
 
     const data = { continueErrorCount: req.body.continueErrorCount };
     const workerPath = path.join(__dirname, '..', 'libs', 'crawlers', 'updateWorker.js');
     const worker = new Worker(workerPath, { workerData: data });
 
     worker.on('exit', () => {
-      onGoingWork = false;
+      onGoingAllRecipesWork = false;
     });
 
     res.status(200).json({ message: 'updating' });
@@ -93,5 +98,29 @@ router.get('/index', (req, res) => {
       res.status(500).json(error);
     });
 });
+
+router.post('/xiachufan', (req, res) => {
+  if (onGoingXiachufanWork) {
+    res.status(200).json({ message: 'onGoingTask exist' });
+    return
+  }
+  onGoingXiachufanWork = true
+  const crawler = spawn('scrapy', ['runspider', 'libs/crawlers/xiachufan/xiachufanRecipeCrawler.py'])
+
+  crawler.stderr.on('data', (data) => {
+    crawlerLogger.debug(data.toString());
+  });
+
+  crawler.stdout.on('data', function (data) {
+    crawlerLogger.debug(data.toString());
+  });
+
+  crawler.on('exit', () => {
+    crawlerLogger.debug('scrapy process exit')
+    onGoingXiachufanWork = false;
+  });
+
+  res.status(200).json({ message: 'Start crawling' });
+})
 
 module.exports = router;

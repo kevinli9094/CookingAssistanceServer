@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 
 // drop all recipes. Only admin can access this
 router.delete('/', (req, res) => {
-  res.app.db.recipes.drop()
+  res.app.db.recipes.deleteMany({})
     .then(() => {
       res.status(200).json({ message: 'Deleted all recipes' });
     })
