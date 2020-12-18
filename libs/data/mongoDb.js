@@ -16,50 +16,10 @@ function initDatabase(url, databaseName) {
       }
       const db = client.db(databaseName);
 
-      db.recipes = db.collection('recipes');
       db.user = db.collection('users');
-      db.crawlerHelper = db.collection('crawlerHelper');
 
       mDatabase = db;
-
-      const createDefaultCrawlerHelper = () => {
-        defaultLogger.info('checking default crawler helper');
-        db.crawlerHelper.findOne()
-          .then((result) => {
-            if (!result) {
-              defaultLogger.info('inserting empty crawlerHelper.');
-              db.crawlerHelper.insertOne({
-                allRecipesIndex: 0,
-              })
-                .then(() => {
-                  resolve(mDatabase);
-                });
-            }
-            resolve(mDatabase);
-          })
-          .catch((error) => {
-            defaultLogger.warn(`Error while inserting default crawler helper${error.message}`);
-            resolve(mDatabase);
-          });
-      };
-
-      db.recipes.createIndex(
-        {
-          name: 'text',
-          ingredients: 'text',
-        },
-        {
-          weights: {
-            name: 5,
-            ingredients: 1,
-          },
-          name: 'TextIndex',
-        },
-      ).then(createDefaultCrawlerHelper)
-        .catch((error) => {
-          defaultLogger.error(error);
-          createDefaultCrawlerHelper();
-        });
+      resolve(db);
     });
   });
 }

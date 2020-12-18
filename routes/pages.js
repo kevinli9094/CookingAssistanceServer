@@ -21,7 +21,7 @@ router.get('/user/edit/:id', (req, res) => {
   userDB.findUserById(res.app.db, userId)
     .then((user) => {
       if (user.filteredDishes && user.filteredDishes.length > 0) {
-        recipesDB.getRecipesFromIds(res.app.db, user.filteredDishes)
+        recipesDB.getRecipesFromIds(res.app.esClient, user.filteredDishes)
           .then((dishes) => {
             res.render('editUser', {
               title: 'Edit user', filteredDishes: dishes, user, userId,
@@ -91,10 +91,10 @@ router.get('/search/:id', (req, res) => {
           query += ` ${searchQuery}`;
         }
 
-        return recipesDB.searchRecipe(res.app.db, query, page, limit, user, minRating, requirements)
+        return recipesDB.searchRecipe(res.app.esClient, query, page, limit, 'cn', user, minRating, requirements)
           .then((result) => {
             if (user.selectedDishes && user.selectedDishes.length > 0) {
-              recipesDB.getRecipesFromIds(res.app.db, user.selectedDishes)
+              recipesDB.getRecipesFromIds(res.app.esClient, user.selectedDishes)
                 .then((userSelectedDishes) => {
                   res.render('search', {
                     title: 'Search', userId, user, fields: commonjs.visibleField, result, page, limit, minRating, searchQuery, requirements: requirementsForUser, userSelectedDishes,
@@ -135,7 +135,7 @@ router.get('/search', (req, res) => {
     });
   }
 
-  recipesDB.searchRecipe(res.app.db, searchQuery, page, limit, null, minRating, requirements)
+  recipesDB.searchRecipe(res.app.esClient, searchQuery, page, limit, 'cn', null, minRating, requirements)
     .then((result) => {
       res.render('search', {
         title: 'Search', fields: commonjs.visibleField, result, page, limit, minRating, searchQuery, requirements: requirementsForUser,
@@ -149,7 +149,7 @@ router.get('/search', (req, res) => {
 router.get('/recipe/:id', (req, res) => {
   const recipeId = req.params.id;
 
-  recipesDB.getRecipesFromIds(res.app.db, [recipeId])
+  recipesDB.getRecipesFromIds(res.app.esClient, [recipeId])
     .then((result) => {
       const recipe = result[0];
       res.render('recipe', {

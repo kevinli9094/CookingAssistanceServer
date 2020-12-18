@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const http = require('http');
+const { Client } = require('@elastic/elasticsearch');
 
 const { getConfig } = require('./libs/config');
 const { initDatabase } = require('./libs/data/mongoDb');
@@ -58,6 +59,8 @@ initDatabase(config.databaseBaseString, config.databaseName)
     app.port = app.get('port');
 
     try {
+      const client = new Client({ node: config.elasticSearchUrl });
+      app.esClient = client;
       await addSchemas();
     } catch (error) {
       defaultLogger.error(error.stack);

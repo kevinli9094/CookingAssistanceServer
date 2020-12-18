@@ -1,21 +1,22 @@
 const { workerData } = require('worker_threads');
-const DB = require('../data/mongoDb');
+const { Client } = require('@elastic/elasticsearch');
 const crawler = require('./allRecipesCrawler');
 const { getConfig } = require('../config');
 const { crawlerLogger } = require('../loggers');
 
 const config = getConfig();
 
-DB.initDatabase(config.databaseBaseString, config.databaseName)
-  .then((db) => crawler.initialCrawling(
-    parseInt(workerData.beginIndex, 10),
-    parseInt(workerData.endIndex, 10),
-    db,
-  )
-    .then(() => {
-      process.exit(0);
-    }))
+const client = new Client({ node: config.elasticSearchUrl });
+
+crawler.initialCrawling(
+  parseInt(workerData.beginIndex, 10),
+  parseInt(workerData.endIndex, 10),
+  client,
+)
+  .then(() => {
+    process.exit(0);
+  })
   .catch((err) => {
-    crawlerLogger.error(`Error connecting to MongoDB: ${err}`);
+    crawlerLogger.error(`Error initialting crawling for all recipe: ${err}`);
     process.exit(2);
   });

@@ -43,7 +43,9 @@ const convertJson = (json) => {
     const instructions = [];
 
     for (let i = 0; i < recipe.recipeInstructions.length; i += 1) {
-      instructions.push(recipe.recipeInstructions[i].text);
+      instructions.push({
+        text: recipe.recipeInstructions[i].text,
+      });
     }
 
     const ratingValue = ((recipe.aggregateRating && recipe.aggregateRating.ratingValue) || 0) * 2;
