@@ -4,7 +4,7 @@ from elasticsearch import Elasticsearch
 firstTime = True
 
 
-# How to run spider: scrapy runspider xiachufanRecipeCrawler.py -a dbUrl='mongodb://localhost:27017/' -a dbName='cookingAssistance'
+# How to run spider: scrapy runspider xiachufanRecipeCrawler.py
 class LinkSpider(scrapy.Spider):
     name = 'xiachufanRecipeCrawler'
     start_urls = [
@@ -14,7 +14,7 @@ class LinkSpider(scrapy.Spider):
     custom_settings = {
         'AUTOTHROTTLE_ENABLED': True,
         'AUTOTHROTTLE_DEBUG': True,
-        'DOWNLOAD_DELAY': 10,
+        'DOWNLOAD_DELAY': 3,
         'FEED_EXPORT_ENCODING' : 'utf-16',
         'USER_AGENT' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:39.0) Gecko/20100101 Firefox/39.0'
     }

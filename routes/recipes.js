@@ -4,34 +4,15 @@ const userDB = require('../libs/data/users');
 
 const router = express.Router();
 
-// return a ramdom recipe
-router.get('/', (req, res) => {
-  recipesDB.randomRecipe(res.app.db)
-    .then((recipes) => {
-      res.status(200).json(recipes);
-    });
-});
-
-// drop all recipes. Only admin can access this
-router.delete('/', (req, res) => {
-  res.app.db.recipes.deleteMany({})
-    .then(() => {
-      res.status(200).json({ message: 'Deleted all recipes' });
-    })
-    .catch((error) => {
-      res.status(500).json(error);
-    });
-});
-
 router.get('/search', (req, res) => {
   const notValidQueryError = new Error('Please provide valid terms for searching in the query');
 
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, language } = req.query;
 
   if (req.query.terms) {
     const query = req.query.terms;
     if (query) {
-      recipesDB.searchRecipe(res.app.db, query, page, limit)
+      recipesDB.searchRecipe(res.app.esClient, query, page, limit, language)
         .then((result) => {
           res.status(200).json(result);
         })
@@ -48,7 +29,7 @@ router.get('/search', (req, res) => {
 
 router.get('/user/search', (req, res) => {
   const {
-    page = 1, limit = 10, userId, minRating,
+    page = 1, limit = 10, userId, minRating, language,
   } = req.query;
 
   const requirements = req.query;
@@ -68,7 +49,16 @@ router.get('/user/search', (req, res) => {
         return Promise.reject(new Error('user does not have any ingredient'));
       }
       const query = user.ingredients.toString().replace(/,/g, ' ');
-      return recipesDB.searchRecipe(res.app.db, query, page, limit, user, minRating, requirements)
+      return recipesDB.searchRecipe(
+        res.app.esClient,
+        query,
+        page,
+        limit,
+        user,
+        language,
+        minRating,
+        requirements,
+      )
         .then((result) => {
           res.status(200).json(result);
         })

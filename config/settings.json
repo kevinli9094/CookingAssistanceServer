@@ -1,4 +1,5 @@
 {
     "databaseBaseString" : "mongodb://localhost:27017/",
-    "databaseName" : "cookingAssistance"
+    "databaseName" : "cookingAssistance",
+    "elasticSearchUrl" : "http://localhost:9200"
 }

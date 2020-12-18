@@ -44,7 +44,7 @@ const convertJson = (json) => {
 
     for (let i = 0; i < recipe.recipeInstructions.length; i += 1) {
       instructions.push({
-        'text' : recipe.recipeInstructions[i].text
+        text: recipe.recipeInstructions[i].text,
       });
     }
 

@@ -55,7 +55,8 @@ block content
                                     img.img-thumbnail(src=recipe.img alt=recipe.name)
                                 .col-7
                                     h3.recipeName=recipe.name
-                                    h5=`rating: ${recipe.rating.value.toFixed(1)}`
+                                    if recipe.rating && recipe.rating.value
+                                        h5=`rating: ${parseFloat(recipe.rating.value).toFixed(1)}`
                                     h5=`description: ${recipe.description}`
                                 if userId
                                     .col-2.my-auto

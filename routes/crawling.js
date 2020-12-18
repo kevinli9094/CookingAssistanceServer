@@ -1,11 +1,10 @@
 const express = require('express');
 const { Worker } = require('worker_threads');
-const {spawn} = require('child_process');
-const { crawlerLogger } = require('../libs/loggers');
-const { getConfig } = require('../libs/config');
+const { spawn } = require('child_process');
 const path = require('path');
+const { crawlerLogger } = require('../libs/loggers');
+const allRecipesCrawler = require('../libs/crawlers/allRecipesCrawler');
 
-const config = getConfig();
 let onGoingAllRecipesWork = false;
 let onGoingXiachufanWork = false;
 
@@ -79,20 +78,10 @@ router.post('/update/allrecipes', (req, res) => {
   }
 });
 
-router.delete('/index', (req, res) => {
-  res.app.db.crawlerHelper.drop()
+router.delete('/index/allrecipe', (req, res) => {
+  allRecipesCrawler.resetIndex(res.app.esClient)
     .then(() => {
       res.status(200).json({ message: 'Deleted all crawlerHelper' });
-    })
-    .catch((error) => {
-      res.status(500).json(error);
-    });
-});
-
-router.get('/index', (req, res) => {
-  res.app.db.crawlerHelper.aggregate([{ $sample: { size: 10 } }]).toArray()
-    .then((result) => {
-      res.status(200).json({ result });
     })
     .catch((error) => {
       res.status(500).json(error);
@@ -102,25 +91,25 @@ router.get('/index', (req, res) => {
 router.post('/xiachufan', (req, res) => {
   if (onGoingXiachufanWork) {
     res.status(200).json({ message: 'onGoingTask exist' });
-    return
+    return;
   }
-  onGoingXiachufanWork = true
-  const crawler = spawn('scrapy', ['runspider', 'libs/crawlers/xiachufan/xiachufanRecipeCrawler.py'])
+  onGoingXiachufanWork = true;
+  const crawler = spawn('scrapy', ['runspider', 'libs/crawlers/xiachufan/xiachufanRecipeCrawler.py']);
 
   crawler.stderr.on('data', (data) => {
     crawlerLogger.debug(data.toString());
   });
 
-  crawler.stdout.on('data', function (data) {
+  crawler.stdout.on('data', (data) => {
     crawlerLogger.debug(data.toString());
   });
 
   crawler.on('exit', () => {
-    crawlerLogger.debug('scrapy process exit')
+    crawlerLogger.debug('scrapy process exit');
     onGoingXiachufanWork = false;
   });
 
   res.status(200).json({ message: 'Start crawling' });
-})
+});
 
 module.exports = router;

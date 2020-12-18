@@ -78,10 +78,11 @@ block content
                 for instruction in recipe.instructions
                     p=`- ${instruction.text}`
             
-            div.mb-5
-                h2 Nutrition:
-                //- need to convert nutrition to visibale one
-                for nutritionItem in Object.entries(recipe.nutrition)
-                    - const displayField = fieldMap[nutritionItem[0]]
-                    - const unit = unitMap[nutritionItem[0]] || ''
-                    div=`${displayField} : ${nutritionItem[1].toFixed(1)} ${unit}`
+            if recipe.nutrition
+                div.mb-5
+                    h2 Nutrition:
+                    //- need to convert nutrition to visibale one
+                    for nutritionItem in Object.entries(recipe.nutrition)
+                        - const displayField = fieldMap[nutritionItem[0]]
+                        - const unit = unitMap[nutritionItem[0]] || ''
+                        div=`${displayField} : ${nutritionItem[1].toFixed(1)} ${unit}`
