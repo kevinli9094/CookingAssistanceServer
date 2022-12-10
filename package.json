@@ -14,7 +14,7 @@
     "ajv-errors": "^1.0.1",
     "cheerio": "^1.0.0-rc.3",
     "cookie-parser": "~1.4.4",
-    "express": "~4.16.1",
+    "express": "~4.17.3",
     "http-errors": "~1.6.3",
     "log4js": "^6.3.0",
     "mathjs": "^7.5.1",
